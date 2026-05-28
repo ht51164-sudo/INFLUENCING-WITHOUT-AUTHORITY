@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bánh Xe Nguồn Lực Ảnh Hưởng</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #111827;
+    --card: #161d2e;
+    --border: #1e2d4a;
+    --accent: #f59e0b;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --green: #10b981;
+    --red: #ef4444;
+    --r0: #f59e0b;
+    --r1: #06b6d4;
+    --r2: #8b5cf6;
+    --r3: #10b981;
+    --r4: #f43f5e;
+    --r5: #fb923c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(245,158,11,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.07) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 20px; position:relative; z-index:1; }
+
+  header { text-align:center; padding: 60px 20px 40px; }
+  .tag {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 46px); line-height: 1.2; margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  header p { color: var(--text2); font-size: 15px; line-height: 1.7; max-width: 580px; margin: 0 auto 32px; }
+
+  .progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); margin-bottom:8px; }
+  .progress-bar-wrap { background:var(--border); border-radius:99px; height:4px; margin-bottom:40px; overflow:hidden; }
+  .progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:99px; transition:width 0.4s ease; width:0%; }
+
+  .section-title { font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+  .section-heading { font-size:20px; font-weight:700; margin-bottom:8px; }
+  .section-desc { color:var(--text2); font-size:14px; line-height:1.6; margin-bottom:28px; }
+
+  .sit-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; margin-bottom:24px; transition:border-color 0.2s; }
+  .sit-card:hover { border-color:rgba(245,158,11,0.3); }
+  .sit-num { font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent2); margin-bottom:10px; }
+  .sit-q { font-size:15px; font-weight:600; line-height:1.6; margin-bottom:20px; }
+  .options { display:flex; flex-direction:column; gap:10px; }
+  .option {
+    display:flex; align-items:flex-start; gap:12px; cursor:pointer;
+    padding:12px 14px; border-radius:10px; border:1px solid transparent;
+    transition:all 0.15s; background:rgba(255,255,255,0.02);
+  }
+  .option:hover { background:rgba(245,158,11,0.07); border-color:rgba(245,158,11,0.25); }
+  .option.selected { background:rgba(245,158,11,0.12); border-color:var(--accent); }
+  .option input[type=radio] { display:none; }
+  .opt-letter {
+    min-width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:var(--text2); transition:all 0.15s; flex-shrink:0; margin-top:1px;
+  }
+  .option.selected .opt-letter { background:var(--accent); border-color:var(--accent); color:#000; }
+  .opt-text { font-size:14px; line-height:1.6; color:var(--text2); }
+  .option.selected .opt-text { color:var(--text); }
+
+  .likert-card { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:24px; }
+  .likert-header {
+    display:grid; grid-template-columns:1fr repeat(5,52px);
+    background:rgba(255,255,255,0.03); border-bottom:1px solid var(--border);
+    padding:12px 20px; font-size:11px; font-weight:600; color:var(--text2);
+  }
+  .likert-header .score-lbl { text-align:center; font-size:11px; line-height:1.3; }
+  .likert-row {
+    display:grid; grid-template-columns:1fr repeat(5,52px);
+    align-items:center; padding:14px 20px;
+    border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.1s;
+  }
+  .likert-row:last-child { border-bottom:none; }
+  .likert-row:hover { background:rgba(255,255,255,0.02); }
+  .q-num { font-size:11px; font-weight:700; color:var(--accent); margin-right:4px; }
+  .q-text { font-size:13.5px; line-height:1.5; color:var(--text); padding-right:12px; }
+  .q-cell { text-align:center; }
+  .q-cell input[type=radio] { display:none; }
+  .q-cell label {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border);
+    cursor:pointer; font-size:12px; font-weight:600; color:var(--text2); transition:all 0.15s;
+  }
+  .q-cell label:hover { border-color:var(--accent); color:var(--accent); }
+  .q-cell input[type=radio]:checked + label { background:var(--accent); border-color:var(--accent); color:#000; font-weight:800; }
+
+  /* NEW badge for new questions */
+  .new-badge {
+    display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px;
+    background:rgba(6,182,212,0.15); color:var(--accent2);
+    padding:2px 6px; border-radius:4px; margin-left:6px; vertical-align:middle;
+    text-transform:uppercase;
+  }
+
+  @media(max-width:600px){
+    .likert-header { display:none; }
+    .likert-row { display:flex; flex-direction:column; gap:10px; padding:16px; }
+    .q-cells-mobile { display:flex; justify-content:space-between; width:100%; }
+    .q-cell label { width:36px; height:36px; font-size:13px; }
+  }
+
+  .error-msg {
+    background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3);
+    color:#fca5a5; font-size:13px; padding:12px 20px; border-radius:10px;
+    margin-bottom:16px; display:none;
+  }
+  .btn-wrap { text-align:center; padding:30px 0 60px; }
+  .btn-primary {
+    display:inline-block; background:linear-gradient(135deg,var(--accent),#d97706);
+    color:#000; font-family:'Be Vietnam Pro',sans-serif; font-size:15px; font-weight:800;
+    letter-spacing:0.5px; padding:16px 48px; border-radius:99px; border:none;
+    cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+    box-shadow:0 4px 24px rgba(245,158,11,0.35);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(245,158,11,0.45); }
+
+  .divider { border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  /* RESULTS */
+  #results { display:none; }
+  .result-header { text-align:center; padding:60px 0 40px; }
+  .result-header h2 {
+    font-family:'Playfair Display',serif; font-size:clamp(26px,4vw,38px); margin-bottom:12px;
+    background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .result-header p { color:var(--text2); font-size:14px; }
+
+  .chart-wrap { display:flex; justify-content:center; margin:32px 0; }
+
+  .scores-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:32px; }
+  @media(max-width:500px){ .scores-grid { grid-template-columns:1fr; } }
+
+  .score-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:18px 20px; position:relative; overflow:hidden;
+  }
+  .score-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+  .score-card[data-axis="0"]::before{background:var(--r0);}
+  .score-card[data-axis="1"]::before{background:var(--r1);}
+  .score-card[data-axis="2"]::before{background:var(--r2);}
+  .score-card[data-axis="3"]::before{background:var(--r3);}
+  .score-card[data-axis="4"]::before{background:var(--r4);}
+  .score-card[data-axis="5"]::before{background:var(--r5);}
+  .score-card-label { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text2); margin-bottom:6px; }
+  .score-card-name { font-size:15px; font-weight:700; margin-bottom:10px; }
+  .score-bar-bg { background:rgba(255,255,255,0.07); border-radius:99px; height:6px; margin-bottom:8px; }
+  .score-bar { height:6px; border-radius:99px; transition:width 1s ease; }
+  .score-val { font-size:22px; font-weight:800; }
+  .score-badge {
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:1px;
+    padding:3px 8px; border-radius:99px; text-transform:uppercase; margin-left:8px; vertical-align:middle;
+  }
+  .badge-strong { background:rgba(16,185,129,0.15); color:var(--green); }
+  .badge-mid    { background:rgba(245,158,11,0.15); color:var(--accent); }
+  .badge-weak   { background:rgba(239,68,68,0.15); color:var(--red); }
+
+  .insights { margin-bottom:40px; }
+  .insight-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px 24px; margin-bottom:14px; }
+  .insight-card.strong { border-left:3px solid var(--green); }
+  .insight-card.weak   { border-left:3px solid var(--red); }
+  .insight-title { font-size:13px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .insight-text  { font-size:13.5px; line-height:1.7; color:var(--text2); }
+  .insight-text + .insight-text { margin-top:10px; }
+
+  .retry-btn {
+    display:inline-block; background:transparent; border:1.5px solid var(--border);
+    color:var(--text2); font-family:'Be Vietnam Pro',sans-serif; font-size:14px; font-weight:600;
+    padding:13px 36px; border-radius:99px; cursor:pointer; transition:all 0.15s; margin-top:12px;
+  }
+  .retry-btn:hover { border-color:var(--accent); color:var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="quiz">
+  <div class="wrap">
+    <header>
+      <div class="tag">Bài Test Chẩn Đoán</div>
+      <h1>Bánh Xe Nguồn Lực Ảnh Hưởng</h1>
+      <p>Xác định bạn đang sử dụng tốt những nguồn lực nào và đang bỏ trống những nguồn lực nào trong môi trường công sở — từ đó tối ưu hóa khả năng phối hợp và dẫn dắt <em>không cần quyền hành chính thức</em>.</p>
+    </header>
+
+    <div class="progress-label">
+      <span>Tiến độ</span>
+      <span id="prog-text">0 / 26 câu</span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+
+    <div class="section-title">Phần 1</div>
+    <div class="section-heading">5 Tình Huống Công Sở Điển Hình</div>
+    <div class="section-desc">Chọn <strong>một</strong> phương án phản ánh đúng nhất cách bạn sẽ xử lý trong thực tế.</div>
+    <div id="situations"></div>
+
+    <hr class="divider">
+
+    <div class="section-title">Phần 2</div>
+    <div class="section-heading">21 Câu Hỏi Phản Chiếu Hành Vi</div>
+    <div class="section-desc">Đánh giá tần suất bạn thực hiện các hành vi sau trong công việc hàng ngày.<br><span style="color:var(--text2);font-size:13px">1 = Không bao giờ &nbsp;→&nbsp; 5 = Luôn luôn</span></div>
+
+    <div class="likert-card">
+      <div class="likert-header">
+        <div>Hành vi</div>
+        <div class="score-lbl">1<br><span style="font-size:9px;font-weight:400">Không<br>bao giờ</span></div>
+        <div class="score-lbl">2<br><span style="font-size:9px;font-weight:400">Hiếm<br>khi</span></div>
+        <div class="score-lbl">3<br><span style="font-size:9px;font-weight:400">Thỉnh<br>thoảng</span></div>
+        <div class="score-lbl">4<br><span style="font-size:9px;font-weight:400">Thường<br>xuyên</span></div>
+        <div class="score-lbl">5<br><span style="font-size:9px;font-weight:400">Luôn<br>luôn</span></div>
+      </div>
+      <div id="likert-rows"></div>
+    </div>
+
+    <div class="error-msg" id="error-msg">⚠️ Vui lòng trả lời đầy đủ tất cả câu hỏi trước khi xem kết quả.</div>
+    <div class="btn-wrap">
+      <button class="btn-primary" onclick="submitQuiz()">Xem Kết Quả →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="wrap">
+    <div class="result-header">
+      <div class="tag">Kết Quả Của Bạn</div>
+      <h2>Bánh Xe Nguồn Lực Ảnh Hưởng</h2>
+      <p>Dựa trên 26 câu trả lời của bạn, đây là hình dạng nguồn lực ảnh hưởng tại công sở.</p>
+    </div>
+    <div class="chart-wrap"><canvas id="radar" width="440" height="440"></canvas></div>
+    <div class="scores-grid" id="scores-grid"></div>
+    <hr class="divider">
+    <div class="insights" id="insights"></div>
+    <div class="btn-wrap">
+      <button class="retry-btn" onclick="restart()">← Làm lại bài test</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const situations = [
+  {
+    num:'Tình huống 1',
+    q:'Bạn cần một file số liệu gấp từ đồng nghiệp phòng ban khác để hoàn thiện báo cáo. Đã giục 2 lần qua tin nhắn nhưng họ vẫn im lặng hoặc khất lần. Bạn không phải sếp của họ. Bạn sẽ:',
+    opts:[
+      'Gửi email chính thức, CC sếp của họ và sếp của bạn để gây áp lực bằng quy trình công việc.',
+      'Tìm đồng nghiệp chơi thân với cả hai để nhờ nhắc khéo giúp.',
+      'Nhắn tin cảnh báo rằng nếu file gửi muộn thì tiến độ chung bị ảnh hưởng và bạn sẽ phải báo cáo lên trên.',
+      'Đến tận bàn họ, hỏi thăm xem có đang quá tải không và chủ động giúp xử lý phần việc nào đó để họ có thời gian làm file cho bạn.',
+      'Hứa rằng nếu họ giúp bạn lần này, bạn sẽ ưu tiên hỗ trợ bất kỳ việc gì họ cần từ phòng bạn.',
+      'Chỉ trực tiếp cho họ một mẹo/biểu mẫu có sẵn giúp hoàn thành file đó chỉ trong 5 phút.',
+    ]
+  },
+  {
+    num:'Tình huống 2',
+    q:'Bạn phát hiện cách làm mới giúp tiết kiệm rất nhiều thời gian làm việc nhóm, nhưng đồng nghiệp đã quen tay với cách cũ và ngại thay đổi. Bạn sẽ:',
+    opts:[
+      'Đề xuất sếp ban hành quy định bắt buộc áp dụng quy trình mới.',
+      'Tự làm video ngắn hoặc tài liệu hướng dẫn chi tiết để chứng minh tính hiệu quả.',
+      'Thuyết phục 1–2 người có "tiếng nói" ngầm trong nhóm dùng thử trước để họ lôi kéo những người còn lại.',
+      'Nhận phần việc khó nhất trong những ngày đầu, thừa nhận bản thân cũng từng lúng túng, và cam kết hỗ trợ mọi người từng bước.',
+      'Đề xuất cả nhóm rằng nếu áp dụng mượt mà và xong việc sớm, bạn sẽ bao cả nhóm trà sữa/cà phê.',
+      'Nhắc nhở trong cuộc họp rằng việc không đổi mới đang làm giảm hiệu suất và có thể ảnh hưởng đến KPI cuối tháng.',
+    ]
+  },
+  {
+    num:'Tình huống 3',
+    q:'Trong cuộc họp phòng, bạn đưa ra đề xuất nhưng ngay lập tức bị đồng nghiệp lâu năm phản đối: "trước giờ không ai làm thế" hoặc "không khả thi". Bạn sẽ:',
+    opts:[
+      'Đưa ra số liệu cụ thể, bằng chứng thực tế và logic chuyên môn để chứng minh lập luận của mình.',
+      'Gặp riêng họ sau cuộc họp để lắng nghe nỗi lo và chia sẻ góc nhìn cầu thị.',
+      'Sử dụng uy tín chức danh hoặc sự ủy quyền từ sếp trước đó để khẳng định quyền quyết định.',
+      'Khéo léo nhắc đến lợi ích cụ thể mà giải pháp này mang lại cho chính công việc của người đang phản đối.',
+      'Quan sát phản ứng mọi người và tìm sự đồng thuận từ các thành viên khác để cùng bảo vệ ý kiến.',
+      'Nhấn mạnh nếu không làm theo phương án này mà xảy ra lỗi do cách cũ, người phản đối sẽ tự chịu trách nhiệm trước sếp.',
+    ]
+  },
+  {
+    num:'Tình huống 4',
+    q:'Sếp bất ngờ giao cho bạn phụ trách tổ chức một sự kiện nội bộ — hoàn toàn không phải chuyên môn của bạn và bạn đang rất bận. Bạn sẽ:',
+    opts:[
+      'Nhận lời ngay vì lệnh của sếp, sau đó dùng quyền hạn phân chia công việc cho cấp dưới hoặc intern.',
+      'Tận dụng mối quen biết với nhân sự ở Hành chính, Marketing, Nhân sự để hỏi xin kinh nghiệm và nhờ hỗ trợ.',
+      'Tìm ngay tài liệu, quy trình tổ chức sự kiện tương tự để tự lên một kế hoạch chỉn chu.',
+      'Thẳng thắn chia sẻ với sếp về giới hạn năng lực của mình và nhờ sếp định hướng người hỗ trợ.',
+      'Thương lượng với sếp để xin thêm ngân sách hoặc quyền lợi cho bản thân và những người hỗ trợ.',
+      'Từ chối hoặc nhận việc với thái độ miễn cưỡng, nhắc sếp rằng việc này làm mất thời gian chuyên môn trong JD.',
+    ]
+  },
+  {
+    num:'Tình huống 5',
+    q:'Đã đến giờ tan làm, bạn gặp sự cố cần sự hỗ trợ gấp của đồng nghiệp bộ phận khác trong 30 phút — nếu không khách hàng sẽ phàn nàn. Bạn sẽ:',
+    opts:[
+      'Viện dẫn quy định về trách nhiệm phối hợp hỗ trợ khách hàng và yêu cầu họ ở lại xử lý cùng.',
+      'Gọi điện cho sếp bạn để nhờ sếp tác động sang phía bộ phận kia cử người hỗ trợ.',
+      'Trao đổi nhanh, thể hiện biết ơn chân thành, nói rõ mức độ khẩn cấp và hứa mời họ bữa ăn trưa ngày mai.',
+      'Nói rõ vấn đề dưới góc độ kỹ thuật để họ thấy việc này rất đơn giản với năng lực của họ và bạn cần "cứu viện" từ chuyên gia như họ.',
+      'Thừa nhận lỗi của mình dẫn đến sự cố, khẩn khoản nhờ họ vì mối quan hệ đồng nghiệp tốt đẹp bấy lâu.',
+      'Tận dụng mối quan hệ thân thiết với nhóm nhân sự trực ca muộn của bộ phận đó để nhờ xử lý giúp.',
+    ]
+  }
+];
+
+// sit[i][j] → axis (0=Vị Trí,1=Ép Buộc,2=Phần Thưởng,3=Chuyên Gia,4=Uy Tín,5=Mạng Lưới)
+const sitAxis = [
+  [0,5,1,4,2,3], // s1: A→Pos,B→Net,C→Coe,D→Per,E→Rew,F→Exp
+  [0,3,5,4,2,1], // s2: A→Pos,B→Exp,C→Net,D→Per,E→Rew,F→Coe
+  [3,4,0,2,5,1], // s3: A→Exp,B→Per,C→Pos,D→Rew,E→Net,F→Coe
+  [0,5,3,4,2,1], // s4: A→Pos,B→Net,C→Exp,D→Per,E→Rew,F→Coe
+  [1,0,2,3,4,5], // s5: A→Coe,B→Pos,C→Rew,D→Exp,E→Per,F→Net
+];
+
+// 21 Likert questions — axis mapping
+const likertQs = [
+  // Original 15
+  { text:'Tôi chủ động trò chuyện, kết nối và giúp đỡ các đồng nghiệp phòng ban khác ngay cả khi không có công việc chung cần phối hợp.', ax:5, isNew:false },
+  { text:'Tôi có xu hướng viện dẫn các quy định, nội quy công ty hoặc mô tả công việc (JD) để yêu cầu người khác làm theo ý mình.', ax:0, isNew:false },
+  { text:'Tôi dành thời gian tự học, nâng cao kiến thức chuyên môn để trở thành người giỏi nhất trong mảng của mình.', ax:3, isNew:false },
+  { text:'Tôi biết rõ tính cách, sở thích, hoặc những áp lực mà các đồng nghiệp xung quanh đang gặp phải.', ax:4, isNew:false },
+  { text:'Tôi sẵn sàng dùng thái độ cứng rắn, phê bình thẳng thắn hoặc báo cáo lên cấp trên nếu đồng nghiệp làm việc tắc trách, ảnh hưởng đến tôi.', ax:1, isNew:false },
+  { text:'Tôi thường khích lệ người khác hỗ trợ mình bằng các phần thưởng nhỏ (mời nước, mời ăn trưa, quà bánh).', ax:2, isNew:false },
+  { text:'Khi gặp rắc rối trong công việc, tôi biết chính xác ai trong/ngoài công ty có thể cho tôi câu trả lời ngay lập tức.', ax:5, isNew:false },
+  { text:'Đồng nghiệp thường chủ động tìm đến tôi để hỏi ý kiến hoặc nhờ tư vấn, giải quyết các ca khó.', ax:3, isNew:false },
+  { text:'Tôi sẵn sàng nhận lỗi trước mặt người khác hoặc thừa nhận điều mình chưa biết để cùng nhau tìm giải pháp.', ax:4, isNew:false },
+  { text:'Tôi tận dụng chức danh chính thức (hoặc thâm niên) để tiếng nói của mình có trọng lượng hơn trong các cuộc thảo luận.', ax:0, isNew:false },
+  { text:'Tôi biết cách hứa hẹn hoặc tạo ra các lợi ích trao đổi công bằng để người khác vui vẻ giúp mình.', ax:2, isNew:false },
+  { text:'Mọi người yêu mến, tin tưởng tôi vì tính cách và sự tử tế hơn là vì chức danh tôi đang có.', ax:4, isNew:false },
+  { text:'Tôi sở hữu danh sách các "mối quan hệ chất lượng" ở nhiều phòng ban và có thể nhờ vả họ lúc khẩn cấp.', ax:5, isNew:false },
+  { text:'Tôi thích dùng số liệu, dữ liệu logic và lập luận khoa học để thuyết phục người khác hơn là dùng cảm xúc.', ax:3, isNew:false },
+  { text:'Khi làm việc nhóm, tôi có thói quen nhắc nhở mọi người về hình phạt hoặc hậu quả bất lợi nếu không hoàn thành đúng hạn.', ax:1, isNew:false },
+  // 6 câu bổ sung mới
+  { text:'Khi cần ai đó ưu tiên xử lý việc của mình, tôi thường đề cập rằng đây là yêu cầu hoặc chỉ đạo từ cấp trên.', ax:0, isNew:true },
+  { text:'Tôi thường đặt deadline rõ ràng và ít khi gia hạn, kể cả khi người kia đưa ra lý do.', ax:1, isNew:true },
+  { text:'Khi nhờ người khác làm một việc ngoài trách nhiệm của họ, tôi thường đề xuất một điều gì đó đổi lại — dù chỉ là lời hứa giúp lại sau.', ax:2, isNew:true },
+  { text:'Khi họp hoặc trao đổi nhóm, tôi thường là người được hỏi ý kiến trước khi cả nhóm đưa ra quyết định.', ax:3, isNew:true },
+  { text:'Có đồng nghiệp từng chia sẻ với tôi những chuyện riêng tư hoặc khó khăn cá nhân mà họ không nói với nhiều người.', ax:4, isNew:true },
+  { text:'Khi có đồng nghiệp mới hoặc người từ phòng ban khác cần thông tin/hỗ trợ, tôi thường là người họ tìm đến hoặc được giới thiệu đến.', ax:5, isNew:true },
+];
+
+const axes = [
+  { name:'Vị Trí',          sub:'Position Power',  color:'#f59e0b' },
+  { name:'Ép Buộc',         sub:'Coercive Power',   color:'#06b6d4' },
+  { name:'Phần Thưởng',     sub:'Reward Power',     color:'#8b5cf6' },
+  { name:'Chuyên Gia',      sub:'Expert Power',     color:'#10b981' },
+  { name:'Uy Tín Cá Nhân',  sub:'Personal Power',   color:'#f43f5e' },
+  { name:'Mạng Lưới',       sub:'Network Power',    color:'#fb923c' },
+];
+
+const insightStrong = [
+  'Bạn biết tận dụng cấu trúc tổ chức để gây ảnh hưởng. Đây là đòn bẩy mạnh — hãy dùng có chọn lọc để không làm mất đi sự linh hoạt trong các mối quan hệ ngang hàng.',
+  'Bạn sẵn sàng đặt ra kỷ luật và giữ vững ranh giới. Hiệu quả trong ngắn hạn — chỉ cần đảm bảo bạn đồng thời xây dựng uy tín cá nhân để cân bằng.',
+  'Bạn giỏi tạo ra các trao đổi tích cực và khích lệ. Đây là chất keo giữ mạng lưới cộng tác. Hãy đảm bảo phần thưởng xuất phát từ sự chân thành.',
+  'Chuyên môn là nguồn lực bền vững nhất — nó thuộc về bạn, không ai lấy đi được. Bạn đang xây dựng một nền tảng ảnh hưởng lâu dài rất vững chắc.',
+  'Người ta theo bạn vì bạn là ai, không phải vì chức danh. Đây là nguồn lực hiếm và quý nhất. Hãy tiếp tục nuôi dưỡng sự chân thực và đồng cảm này.',
+  'Bạn biết cách xây dựng và kích hoạt các mối quan hệ. Trong môi trường phối hợp liên phòng ban, đây là siêu năng lực thực sự của bạn.',
+];
+
+const insightWeak = [
+  'Bạn ít dựa vào cấu trúc chức vụ. Điều này tốt nếu bạn đang bù đắp bằng uy tín cá nhân — nhưng hãy học cách vận dụng quy trình chính thức khi thực sự cần thiết.',
+  'Bạn ít sử dụng áp lực hoặc kỷ luật. Đôi khi đặt ra ranh giới rõ ràng là cần thiết để bảo vệ chất lượng công việc chung — hãy luyện tập nói "không" đúng thời điểm.',
+  'Bạn chưa chú trọng tạo ra các trao đổi tích cực. Hãy thử những cử chỉ nhỏ — một lời cảm ơn thật tình, một bữa cà phê — để củng cố hợp tác tự nhiên hơn.',
+  'Chuyên môn của bạn đang chưa được thể hiện đủ mạnh. Hãy chia sẻ kiến thức, viết tóm tắt nhanh, hoặc hỗ trợ đồng nghiệp giải quyết ca khó để xây dựng uy tín chuyên môn.',
+  'Uy tín cá nhân đang là khoảng trống lớn nhất. Theo triết lý Leading Without Authority, đây là trục quan trọng nhất. Hãy đầu tư vào sự đồng cảm, tính nhất quán và chân thành trong từng tương tác nhỏ.',
+  'Mạng lưới của bạn đang mỏng hoặc chưa được kích hoạt. Hãy chủ động "Serve & Share" — giúp người khác trước khi cần nhờ — để xây dựng vốn xã hội thực sự.',
+];
+
+// ═══════════════════════════════════════════
+// BUILD UI
+// ═══════════════════════════════════════════
+function buildSituations(){
+  const container = document.getElementById('situations');
+  const letters = ['A','B','C','D','E','F'];
+  situations.forEach((s,si)=>{
+    const card = document.createElement('div');
+    card.className = 'sit-card';
+    let optsHtml = s.opts.map((o,oi)=>`
+      <label class="option">
+        <input type="radio" name="s${si}" value="${oi}">
+        <div class="opt-letter">${letters[oi]}</div>
+        <div class="opt-text">${o}</div>
+      </label>`).join('');
+    card.innerHTML = `<div class="sit-num">${s.num}</div><div class="sit-q">${s.q}</div><div class="options">${optsHtml}</div>`;
+    container.appendChild(card);
+    card.querySelectorAll('.option').forEach(opt=>{
+      opt.querySelector('input').addEventListener('change',()=>{
+        card.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));
+        opt.classList.add('selected');
+        updateProgress();
+      });
+    });
+  });
+}
+
+function buildLikert(){
+  const container = document.getElementById('likert-rows');
+  likertQs.forEach((q,qi)=>{
+    const row = document.createElement('div');
+    row.className = 'likert-row';
+    let cells = '';
+    for(let v=1;v<=5;v++){
+      cells += `<div class="q-cell"><input type="radio" name="q${qi}" id="q${qi}v${v}" value="${v}"><label for="q${qi}v${v}">${v}</label></div>`;
+    }
+    row.innerHTML = `<div class="q-text"><span class="q-num">${qi+1}.</span>${q.text}</div>${cells}`;
+    row.querySelectorAll('input').forEach(inp=>inp.addEventListener('change', updateProgress));
+    container.appendChild(row);
+  });
+}
+
+function updateProgress(){
+  let done = 0;
+  for(let i=0;i<5;i++) if(document.querySelector(`input[name="s${i}"]:checked`)) done++;
+  for(let i=0;i<21;i++) if(document.querySelector(`input[name="q${i}"]:checked`)) done++;
+  const total = 26;
+  document.getElementById('prog-text').textContent = `${done} / ${total} câu`;
+  document.getElementById('prog-bar').style.width = (done/total*100)+'%';
+}
+
+// ═══════════════════════════════════════════
+// SCORING
+// Each axis scored 0–10:
+//   - Situations contribute up to 2 pts (binary: hit any = 2, else 0)
+//   - Likert (3 questions per axis, max 15) normalized to 0–8
+//   - Total max = 10
+// ═══════════════════════════════════════════
+function calcScores(){
+  // Situation score: 2 if user picked the matching axis option, else 0 (capped at 2 per axis)
+  const sitScore = [0,0,0,0,0,0];
+  for(let si=0;si<5;si++){
+    const inp = document.querySelector(`input[name="s${si}"]:checked`);
+    if(!inp) continue;
+    const ax = sitAxis[si][parseInt(inp.value)];
+    sitScore[ax] = 2; // flat 2pts regardless of how many situations hit same axis
+  }
+
+  // Likert score per axis: sum of 3 questions (max 15) → normalize to 0–8
+  const likertSum = [0,0,0,0,0,0];
+  for(let qi=0;qi<21;qi++){
+    const inp = document.querySelector(`input[name="q${qi}"]:checked`);
+    if(!inp) continue;
+    likertSum[likertQs[qi].ax] += parseInt(inp.value);
+  }
+
+  return axes.map((_,i)=>{
+    const lNorm = (likertSum[i] / 15) * 8; // 3 questions × 5 max = 15
+    return Math.round(Math.min(10, sitScore[i] + lNorm) * 10) / 10;
+  });
+}
+
+// ═══════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════
+function submitQuiz(){
+  let missing = false;
+  for(let i=0;i<5;i++) if(!document.querySelector(`input[name="s${i}"]:checked`)){ missing=true; break; }
+  if(!missing) for(let i=0;i<21;i++) if(!document.querySelector(`input[name="q${i}"]:checked`)){ missing=true; break; }
+  const errEl = document.getElementById('error-msg');
+  if(missing){
+    errEl.style.display='block';
+    errEl.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  errEl.style.display='none';
+  showResults(calcScores());
+}
+
+// ═══════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════
+function showResults(scores){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  buildScoreCards(scores);
+  buildRadar(scores);
+  buildInsights(scores);
+}
+
+function buildScoreCards(scores){
+  const grid = document.getElementById('scores-grid');
+  grid.innerHTML = '';
+  scores.forEach((s,i)=>{
+    let badge='', bclass='';
+    if(s>=7.5){badge='Thế mạnh';bclass='badge-strong';}
+    else if(s>=5){badge='Đang phát triển';bclass='badge-mid';}
+    else{badge='Cần kích hoạt';bclass='badge-weak';}
+    const card = document.createElement('div');
+    card.className='score-card'; card.dataset.axis=i;
+    card.innerHTML=`
+      <div class="score-card-label">${axes[i].sub}</div>
+      <div class="score-card-name">${axes[i].name}</div>
+      <div class="score-bar-bg"><div class="score-bar" style="width:0%;background:${axes[i].color}" data-pct="${s/10*100}"></div></div>
+      <div><span class="score-val" style="color:${axes[i].color}">${s.toFixed(1)}</span>
+      <span style="color:var(--text2);font-size:13px">/10</span>
+      <span class="score-badge ${bclass}">${badge}</span></div>`;
+    grid.appendChild(card);
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('.score-bar').forEach(b=>b.style.width=b.dataset.pct+'%');
+  },120);
+}
+
+function buildRadar(scores){
+  const canvas = document.getElementById('radar');
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2;
+  const R = Math.min(W,H)/2 - 58;
+  const N=6, maxVal=10;
+  const angle = i => (-Math.PI/2)+(i/N)*2*Math.PI;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid rings
+  for(let ring=1;ring<=5;ring++){
+    const r=R*(ring/5);
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const x=cx+r*Math.cos(angle(i)), y=cy+r*Math.sin(angle(i));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.18)'; ctx.font='10px Be Vietnam Pro';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(ring*2, cx+4, cy-r+1);
+  }
+
+  // Axis lines
+  for(let i=0;i<N;i++){
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+R*Math.cos(angle(i)), cy+R*Math.sin(angle(i)));
+    ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  scores.forEach((s,i)=>{
+    const r=R*(s/maxVal), x=cx+r*Math.cos(angle(i)), y=cy+r*Math.sin(angle(i));
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(245,158,11,0.15)'; ctx.fill();
+  ctx.strokeStyle='rgba(245,158,11,0.75)'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Dots
+  scores.forEach((s,i)=>{
+    const r=R*(s/maxVal), x=cx+r*Math.cos(angle(i)), y=cy+r*Math.sin(angle(i));
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle=axes[i].color; ctx.fill();
+  });
+
+  // Labels
+  scores.forEach((s,i)=>{
+    const off=R+32, x=cx+off*Math.cos(angle(i)), y=cy+off*Math.sin(angle(i));
+    ctx.fillStyle=axes[i].color; ctx.font='bold 12px Be Vietnam Pro';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const words=axes[i].name.split(' ');
+    words.forEach((w,wi)=>ctx.fillText(w, x, y+(wi-(words.length-1)/2)*15));
+  });
+}
+
+function buildInsights(scores){
+  const container = document.getElementById('insights');
+  container.innerHTML = '<div class="section-title" style="margin-bottom:16px">Phân Tích & Khuyến Nghị</div>';
+
+  const strong = scores.map((s,i)=>({s,i})).filter(x=>x.s>=7.5);
+  const mid    = scores.map((s,i)=>({s,i})).filter(x=>x.s>=5&&x.s<7.5);
+  const weak   = scores.map((s,i)=>({s,i})).filter(x=>x.s<5);
+
+  if(strong.length){
+    const card=document.createElement('div');
+    card.className='insight-card strong';
+    const names=strong.map(x=>`<span style="color:${axes[x.i].color};font-weight:700">${axes[x.i].name}</span>`).join(', ');
+    card.innerHTML=`<div class="insight-title">💪 Thế Mạnh (≥ 7.5đ) — ${names}</div>
+      <div class="insight-text">${strong.map(x=>`<strong style="color:${axes[x.i].color}">${axes[x.i].name}:</strong> ${insightStrong[x.i]}`).join('<br><br>')}</div>`;
+    container.appendChild(card);
+  }
+
+  if(mid.length){
+    const card=document.createElement('div');
+    card.className='insight-card';
+    card.style.borderLeft='3px solid var(--accent)';
+    const names=mid.map(x=>`<span style="color:${axes[x.i].color};font-weight:700">${axes[x.i].name}</span>`).join(', ');
+    card.innerHTML=`<div class="insight-title">⚡ Đang Phát Triển (5 – 7.5đ) — ${names}</div>
+      <div class="insight-text">Bạn đang trên đà tốt với các nguồn lực này. Chỉ cần duy trì và tinh chỉnh thêm một chút là có thể nâng lên mức thế mạnh. Hãy quan sát xem mình đang thiếu ở hành vi nào cụ thể nhất.</div>`;
+    container.appendChild(card);
+  }
+
+  if(weak.length){
+    const card=document.createElement('div');
+    card.className='insight-card weak';
+    const names=weak.map(x=>`<span style="color:${axes[x.i].color};font-weight:700">${axes[x.i].name}</span>`).join(', ');
+    card.innerHTML=`<div class="insight-title">🎯 Cần Kích Hoạt (&lt; 5đ) — ${names}</div>
+      <div class="insight-text">${weak.map(x=>`<strong style="color:${axes[x.i].color}">${axes[x.i].name}:</strong> ${insightWeak[x.i]}`).join('<br><br>')}</div>`;
+    container.appendChild(card);
+  }
+
+  // LWA Philosophy note
+  const note=document.createElement('div');
+  note.className='insight-card';
+  note.style.cssText='border-left:3px solid var(--accent3);margin-top:8px;';
+  note.innerHTML=`<div class="insight-title" style="color:var(--accent3)">📌 Triết Lý Leading Without Authority</div>
+    <div class="insight-text">Trong môi trường công sở hiện đại, ảnh hưởng thực sự không đến từ chức danh — mà đến từ sự kết hợp hài hòa của cả 6 nguồn lực.<br><br>
+    Nếu <strong style="color:#f43f5e">Uy Tín Cá Nhân</strong> hoặc <strong style="color:#fb923c">Mạng Lưới</strong> của bạn quá thấp, bạn sẽ gặp rất nhiều lực cản khi phối hợp liên phòng ban — dù bạn có chuyên môn giỏi đến đâu.<br><br>
+    Hãy bắt đầu từ việc <em><strong>Serve & Share</strong></em> nhiều hơn mỗi ngày: chủ động giúp trước, chia sẻ kiến thức trước, kết nối trước — và nguồn lực ảnh hưởng sẽ tự nhiên tích lũy theo thời gian.</div>`;
+  container.appendChild(note);
+}
+
+function restart(){
+  document.querySelectorAll('input[type=radio]').forEach(inp=>inp.checked=false);
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+buildSituations();
+buildLikert();
+updateProgress();
+</script>
+</body>
+</html>
